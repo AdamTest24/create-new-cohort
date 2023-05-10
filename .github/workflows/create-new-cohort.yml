@@ -16,25 +16,31 @@ on:
   #       default: ''
 
 jobs:
-  create_repo:
-    name: Create new GitHub repo
+  parse_issue:
+    name: Parse Issue data
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GH_PAT }}
-
     steps:
-        - name: Fetch the issue
-          id: read_issue_body
-          run:
-            echo "body=$(gh issue view ${{ inputs.issue_number }} --repo ${{
-            github.repo }} --json body --jq '.body')" >> $GITHUB_OUTPUT
+      - name: Fetch the issue
+        id: read_issue_body
+        run:
+          echo "body=$(gh issue view ${{ inputs.issue_number }} --repo ${{
+          github.repo }} --json body --jq '.body')" >> $GITHUB_OUTPUT
 
-        - name: Parse issue
-          id: parse
-          uses: zentered/issue-forms-body-parser@v2.0.0
-          with:
-            body: ${{ steps.read_issue_body.output.body }}
-        - run: echo ${{ toJSON(steps.parse.outputs.data) }}
-        # - name: Create repo
-        #   run: |
-        #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
+      - name: Parse issue
+        id: parse
+        uses: zentered/issue-forms-body-parser@v2.1.1
+        with:
+          body: ${{ steps.read_issue_body.output.body }}
+      - run: echo ${{ toJSON(steps.parse.outputs.data) }}
+  # create_repo:
+  #   name: Create new GitHub repo
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     GH_TOKEN: ${{ secrets.GH_PAT }}
+
+  #   steps:
+  #       # - name: Create repo
+  #       #   run: |
+  #       #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
