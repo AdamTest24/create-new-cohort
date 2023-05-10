@@ -1,0 +1,67 @@
+name: New cohort
+description: Create new course cohort
+title: "<title>"
+labels: ["cohort"]
+body:
+- type: checkboxes
+  id: check-login
+  attributes:
+    label: Have you created a new organization for the cohort using the L2D-admin account
+    description: "Please make sure that you have created a new organization and are logged in with the **L2D-admin** account."
+    options:
+    - label: I am logged in to the **L2D-admin** account
+      required: true
+    - label: I have created a new organization using the **L2D-admin** account
+      required: true
+- type: input
+  id: org-name
+  attributes:
+    label: Organization name
+    desscription: "Name of the new GitHub organization for the cohort"
+    validations:
+      required: true
+# TODO: could we convert this to a dropdown menu which lists the available repositories and have a GHA which updates 
+#       this list when new repositories are added?
+- type: input
+  id: lesson-repo
+  attributes:
+    label: Lesson repository
+    description: "Name of the repository hosting the sandpaper lesson. Will be cloned to the new organization."
+    placeholder: lesson-repo
+    validations:
+      required: false
+# TODO: idem as previous, would have to allow selecting multiple instances
+- type: textarea
+  id: assignments
+  attributes:
+    label: List of assignments
+    description: "Which assignments should be added to the organization? These repositories will be cloned as **template repositories** in the new organization, for use in GitHub Classroom."
+    placeholder: |
+      repo1
+      repo2
+      repo3
+      ...
+    validations:
+      required: false
+- type: textarea
+  id: instructors
+  attributes:
+    label: List of instructors
+    description: "Provide a list of instructor names and emails so they can be invited to the new organization as admins"
+    placeholder: |
+      name1, email1
+      name2, email2
+      ...
+- type: textarea
+  id: students
+  attributes:
+    label: List of students
+    description: "Provide a list of student names and emails so they can be invited to the new organization's 'Students team'"
+    placeholder: |
+      name1, email1
+      name2, email2
+      ...
+- type: markdown
+  attributes:
+    # TODO: document next steps
+    value: "Thanks for completing the form! The next steps are..."
