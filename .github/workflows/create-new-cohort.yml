@@ -1,8 +1,12 @@
-name: Create new repo
+name: Create new cohort
 
 on:
   workflow_dispatch:
     inputs:
+      org-name:
+        description: What is the name of the organization?
+        required: true
+        default: ''
       repo-name:
         description: What is the name of the repository?
         required: true
@@ -20,4 +24,4 @@ jobs:
           uses: actions/checkout@v3
         - name: Create repo
           run: |
-            gh repo create ${{ github.event.inputs.repo-name }} --private
+            gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
