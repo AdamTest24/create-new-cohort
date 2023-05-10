@@ -6,7 +6,7 @@ body:
 - type: checkboxes
   id: check-login
   attributes:
-    label: Have you created a new organization for the cohort using the L2D-admin account
+    label: Have you created a new organization for the cohort using the L2D-admin account?
     description: "Please make sure that you have created a new organization and are logged in with the **L2D-admin** account."
     options:
     - label: I am logged in to the **L2D-admin** account
