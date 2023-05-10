@@ -20,7 +20,7 @@ body:
     description: "Name of the new GitHub organization for the cohort"
   validations:
     required: true
-# TODO: could we convert this to a dropdown menu which lists the available repositories and have a GHA which updates 
+# TODO: could we convert this to a dropdown menu which lists the available repositories and have a GHA which updates
 #       this list when new repositories are added?
 - type: input
   id: lesson-repo
@@ -28,7 +28,7 @@ body:
     label: Lesson repository
     description: "Name of the repository hosting the sandpaper lesson. Will be cloned to the new organization."
     placeholder: lesson-repo
- validations:
+  validations:
    required: false
 # TODO: idem as previous, would have to allow selecting multiple instances
 - type: textarea
