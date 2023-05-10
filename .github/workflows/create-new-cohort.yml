@@ -1,0 +1,23 @@
+name: Create new repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo-name:
+        description: What is the name of the repository?
+        required: true
+        default: ''
+
+jobs:
+  create_repo:
+    name: Create new GitHub repo
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT }}
+
+    steps:
+        - name: Check out repo
+          uses: actions/checkout@v3
+        - name: Create repo
+          run: |
+            gh repo create ${{ github.event.inputs.repo-name }} --private
