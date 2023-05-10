@@ -3,14 +3,17 @@ name: Create new cohort
 on:
   workflow_dispatch:
     inputs:
-      org-name:
-        description: What is the name of the organization?
+      issue_number:
         required: true
-        default: ''
-      repo-name:
-        description: What is the name of the repository?
-        required: true
-        default: ''
+  #   inputs:
+  #     org-name:
+  #       description: What is the name of the organization?
+  #       required: true
+  #       default: ''
+  #     repo-name:
+  #       description: What is the name of the repository?
+  #       required: true
+  #       default: ''
 
 jobs:
   create_repo:
@@ -20,8 +23,18 @@ jobs:
       GH_TOKEN: ${{ secrets.GH_PAT }}
 
     steps:
-        - name: Check out repo
-          uses: actions/checkout@v3
-        - name: Create repo
-          run: |
-            gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
+        - name: Fetch the issue
+          id: read_issue_body
+          run:
+            echo "body=$(gh issue view ${{ inputs.issue_number }} --repo ${{
+            github.repo }} --json body --jq '.body')" >> $GITHUB_OUTPUT
+
+        - name: Parse issue
+          id: parse
+          uses: zentered/issue-forms-body-parser@v2.0.0
+          with:
+            body: ${{ steps.read_issue_body.output.body }}
+        - run: echo ${{ toJSON(steps.parse.outputs.data) }}
+        # - name: Create repo
+        #   run: |
+        #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
