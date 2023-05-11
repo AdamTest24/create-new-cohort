@@ -33,9 +33,9 @@ jobs:
     needs: parse_issue
     runs-on: ubuntu-latest
     env:
-      ISSUE_DATA: ${{ fromJson(needs.parse_issue.outputs.data) }}
+      ISSUE_DATA: ${{ needs.parse_issue.outputs.data }}
     steps:
-      - run: echo "$ISSUE_DATA"
+      - run: echo ${{ fromJson(env.ISSUE_DATA) }}
         # - name: Create repo
         #   run: |
         #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
