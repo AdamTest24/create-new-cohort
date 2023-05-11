@@ -19,7 +19,14 @@ jobs:
         id: parse
         uses: zentered/issue-forms-body-parser@v2.1.1
       - name: Show output
-        run: echo ${{ toJson(steps.parse.outputs.data) }}
+        run: |
+          echo ${{ toJson(steps.parse.outputs.data) }} >> "parse_data.json"
+          cat parse_data.json
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: parse-data
+          path: parse_data.json
 
   create_repo:
     name: Create new GitHub repo
