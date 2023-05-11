@@ -36,12 +36,9 @@ jobs:
       ISSUE_DATA: ${{ needs.parse_issue.outputs.data }}
     steps:
       - name: Show JSON fields
-        env:
-          ORG_NAME: ${{ env.ISSUE_DATA.organization-name }}
-          REPO_NAME: ${{ env.ISSUE_DATA.lesson-repository }}
         run: |
-          echo $ORG_NAME
-          echo $REPO_NAME
+          echo "Org name:" $(echo $ISSUE_DATA | jq -r '."organization-name".content')
+          echo "Repo name:" $(echo $ISSUE_DATA | jq -r '."lesson-repository".content')
         # - name: Create repo
         #   run: |
         #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
