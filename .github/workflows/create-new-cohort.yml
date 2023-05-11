@@ -35,7 +35,10 @@ jobs:
     env:
       ISSUE_DATA: ${{ needs.parse_issue.outputs.data }}
     steps:
-      - run: echo ${{ fromJson(env.ISSUE_DATA) }}
+      - name: Show JSON fields
+        run: |
+          echo ${{ env.ISSUE_DATA.organization-name }}
+          echo ${{ env.ISSUE_DATA.lesson-repository }}
         # - name: Create repo
         #   run: |
         #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
