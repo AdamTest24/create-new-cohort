@@ -1,6 +1,8 @@
 name: Create new cohort
 
 on:
+  issues:
+    types: labeled
   workflow_dispatch:
     inputs:
       issue_number:
@@ -17,6 +19,7 @@ on:
 
 jobs:
   parse_issue:
+    if: ${{ github.event.label.name == 'cohort' }}
     name: Parse Issue data
     runs-on: ubuntu-latest
     env:
