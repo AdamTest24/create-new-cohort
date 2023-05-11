@@ -13,7 +13,7 @@ jobs:
     name: Parse Issue data
     runs-on: ubuntu-latest
     outputs:
-      data: ${{ steps.parse_issue.outputs.data }}
+      data: ${{ steps.parse.outputs.data }}
     steps:
       - name: Parse issue
         id: parse
