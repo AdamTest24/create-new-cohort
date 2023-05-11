@@ -4,26 +4,31 @@ on:
   issues:
     types: labeled
 
+env:
+  GH_TOKEN: ${{ secrets.GH_PAT }}
+
 jobs:
   parse_issue:
     if: ${{ github.event.label.name == 'cohort' }}
     name: Parse Issue data
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GH_PAT }}
+    outputs:
+      data: ${{ steps.parse_issue.outputs.data }}
     steps:
       - name: Parse issue
         id: parse
         uses: zentered/issue-forms-body-parser@v2.1.1
       - name: Show output
-        run: echo ${{ fromJson(steps.parse.outputs.data) }}
-  # create_repo:
-  #   name: Create new GitHub repo
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: echo ${{ toJson(steps.parse.outputs.data) }}
 
-  #   steps:
-  #       # - name: Create repo
-  #       #   run: |
-  #       #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
+  create_repo:
+    name: Create new GitHub repo
+    needs: parse_issue
+    runs-on: ubuntu-latest
+    env:
+      ISSUE_DATA: ${{ fromJson(needs.parse_issue.outputs.data) }}
+    steps:
+        - run: echo "$ISSUE_DATA"
+        # - name: Create repo
+        #   run: |
+        #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
