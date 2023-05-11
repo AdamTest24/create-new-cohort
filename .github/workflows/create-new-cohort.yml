@@ -25,10 +25,10 @@ jobs:
     name: Create new GitHub repo
     needs: parse_issue
     runs-on: ubuntu-latest
-    env:
-      ISSUE_DATA: ${{ fromJson(needs.parse_issue.outputs.data) }}
     steps:
-        - run: echo "$ISSUE_DATA"
+      - env:
+          ISSUE_DATA: ${{ fromJson(needs.parse_issue.outputs.data) }}
+        run: echo "$ISSUE_DATA"
         # - name: Create repo
         #   run: |
         #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
