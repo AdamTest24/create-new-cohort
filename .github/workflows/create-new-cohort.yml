@@ -25,8 +25,7 @@ jobs:
       - name: Fetch the issue
         id: read_issue_body
         run:
-          echo "body=$(gh issue view ${{ inputs.issue_number }} --repo ${{
-          github.repo }} --json body --jq '.body')" >> $GITHUB_OUTPUT
+          echo "body=$(gh issue view ${{ inputs.issue_number }} --repo ${{ github.repository }} --json body --jq '.body')" >> $GITHUB_OUTPUT
 
       - name: Parse issue
         id: parse
