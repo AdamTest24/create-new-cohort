@@ -37,8 +37,8 @@ jobs:
     steps:
       - name: Show JSON fields
         run: |
-          echo ${{ env.ISSUE_DATA.organization-name }}
-          echo ${{ env.ISSUE_DATA.lesson-repository }}
+          echo ${{ toJson(env.ISSUE_DATA.organization-name) }}
+          echo ${{ toJson(env.ISSUE_DATA.lesson-repository) }}
         # - name: Create repo
         #   run: |
         #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
