@@ -8,6 +8,7 @@ env:
   GH_TOKEN: ${{ secrets.GH_PAT }}
 
 jobs:
+
   parse_issue:
     if: ${{ github.event.label.name == 'cohort' }}
     name: Parse Issue data
@@ -29,16 +30,17 @@ jobs:
           path: parse_data.json
 
   create_repo:
-    name: Create new GitHub repo
+    name: Create new GitHub repos
     needs: parse_issue
     runs-on: ubuntu-latest
     env:
       ISSUE_DATA: ${{ needs.parse_issue.outputs.data }}
     steps:
-      - name: Show JSON fields
+      - name: Extract JSON fields
+        id: extract
         run: |
-          echo "Org name:" $(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')
-          echo "Repo name:" $(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')
-      - name: Create repo
+          echo "org=" $(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]') >> $GITHUB_OUTPUT
+          echo "repo" $(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]') >> $GITHUB_OUTPUT
+      - name: Fork lesson repo
         run: |
-          gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
+          gh repo fork ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }} --org ${{ steps.extract.outputs.org }}
