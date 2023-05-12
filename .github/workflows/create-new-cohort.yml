@@ -22,7 +22,6 @@ jobs:
       - name: Show output
         run: |
           echo ${{ toJson(steps.parse.outputs.data) }} >> "parse_data.json"
-          cat parse_data.json
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
