@@ -42,4 +42,5 @@ jobs:
           echo "repo=" $(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]') >> $GITHUB_OUTPUT
       - name: Fork lesson repo
         run: |
-          gh repo fork ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }} --org ${{ steps.extract.outputs.org }}
+          # gh repo fork ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }} --org ${{ steps.extract.outputs.org }}
+          echo ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }}
