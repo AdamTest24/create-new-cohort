@@ -3,13 +3,14 @@ name: Create new cohort
 on:
   issues:
     types: labeled
+  push:
 
 env:
   GH_TOKEN: ${{ secrets.GH_PAT }}
 
 jobs:
   parse_issue:
-    if: ${{ github.event.label.name == 'cohort' }}
+    # if: ${{ github.event.label.name == 'cohort' }}
     name: Parse Issue data
     runs-on: ubuntu-latest
     outputs:
