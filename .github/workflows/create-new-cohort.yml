@@ -38,8 +38,8 @@ jobs:
     steps:
       - name: Show JSON fields
         run: |
-          echo "Org name:" $(echo $ISSUE_DATA | jq -r '."organization-name".content')
-          echo "Repo name:" $(echo $ISSUE_DATA | jq -r '."lesson-repository".content')
+          echo "Org name:" $(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')
+          echo "Repo name:" $(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')
         # - name: Create repo
         #   run: |
         #     gh repo create ${{ github.event.inputs.org-name }}/${{ github.event.inputs.repo-name }} --private
