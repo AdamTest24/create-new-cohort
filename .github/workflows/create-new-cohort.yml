@@ -24,9 +24,9 @@ jobs:
       - name: Extract relevant fields
         id: extract
         run: |
-          echo "org=$(jq -r '."organization-name".content|.[]' ${{ steps.parse.outputs.data }})" >> $GITHUB_OUTPUT
-          echo "repo=$(jq -r '."lesson-repository".content|.[]' ${{ steps.parse.outputs.data }})" >> $GITHUB_OUTPUT
-          echo "assignments=$(jq -c '."list-of-assignments".content' ${{ steps.parse.outputs.data }})" >> $GITHUB_OUTPUT
+          echo "org=$( echo ${{ steps.parse.outputs.data }} | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
+          echo "repo=$( echo ${{ steps.parse.outputs.data }} | jq -r '."lesson-repository".content|.[]')" >> $GITHUB_OUTPUT
+          echo "assignments=$( echo ${{ steps.parse.outputs.data }} | jq -c '."list-of-assignments".content')" >> $GITHUB_OUTPUT
       - name: Show output
         run: |
           echo ${{ toJson(steps.parse.outputs.data) }} >> "parse_data.json"
