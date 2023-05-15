@@ -38,11 +38,8 @@ jobs:
       - name: Extract JSON fields
         id: extract
         run: |
-          # echo "org=" $(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]') >> $GITHUB_OUTPUT
-          # echo "repo=" $(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]') >> $GITHUB_OUTPUT
-          echo "org=org"  >> $GITHUB_OUTPUT
-          echo "repo=repo"  >> $GITHUB_OUTPUT
+          echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
+          echo "repo=$(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')" >> $GITHUB_OUTPUT
       - name: Fork lesson repo
         run: |
-          # gh repo fork ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }} --org ${{ steps.extract.outputs.org }}
-          echo ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }}
+          gh repo fork ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }} --org ${{ steps.extract.outputs.org }}
