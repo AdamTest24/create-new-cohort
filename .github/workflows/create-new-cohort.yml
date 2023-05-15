@@ -41,5 +41,6 @@ jobs:
           echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
           echo "repo=$(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')" >> $GITHUB_OUTPUT
       - name: Fork lesson repo
+        if: steps.extract.outputs.repo != '*No response*'
         run: |
           gh repo fork ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }} --org ${{ steps.extract.outputs.org }}
