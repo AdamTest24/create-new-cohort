@@ -49,3 +49,17 @@ jobs:
         run: |
           echo 'gh repo fork ${{ github.repository_owner }}/${{ env.REPO }} --org ${{ env.ORG }}'
 
+  create_assignment_repos:
+    name: Fork assignment repos
+    needs: parse_issue
+    runs-on: ubuntu-latest
+    env:
+      ORG: ${{ needs.parse_issue.outputs.org }}
+    strategy:
+      matrix:
+        repos: ${{ fromJson(needs.parse_issue.outputs.assignments) }}
+    steps:
+      - name: Fork assignment repos
+        if: matrix.repos != '*No response*'
+        run: |
+          echo 'gh repo fork ${{ github.repository_owner }}/${{ matrix.repos }} --org ${{ env.ORG }}'
