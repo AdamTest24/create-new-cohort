@@ -14,11 +14,19 @@ jobs:
     name: Parse Issue data
     runs-on: ubuntu-latest
     outputs:
-      data: ${{ steps.parse.outputs.data }}
+      org: ${{ steps.extract.outputs.org }}
+      lesson_repo: ${{ steps.extract.outputs.repo }}
+      assignments: ${{ steps.extract.outputs.assignments }}
     steps:
       - name: Parse issue
         id: parse
         uses: zentered/issue-forms-body-parser@v2.1.1
+      - name: Extract relevant fields
+        id: extract
+        run: |
+          echo "org=$(jq -r '."organization-name".content|.[]' ${{ steps.parse.outputs.data }})" >> $GITHUB_OUTPUT
+          echo "repo=$(jq -r '."lesson-repository".content|.[]' ${{ steps.parse.outputs.data }})" >> $GITHUB_OUTPUT
+          echo "assignments=$(jq -c '."list-of-assignments".content' ${{ steps.parse.outputs.data }})" >> $GITHUB_OUTPUT
       - name: Show output
         run: |
           echo ${{ toJson(steps.parse.outputs.data) }} >> "parse_data.json"
@@ -28,19 +36,16 @@ jobs:
           name: parse-data
           path: parse_data.json
 
-  create_repo:
-    name: Create new GitHub repos
+  create_lesson_repo:
+    name: Fork lesson repo
     needs: parse_issue
     runs-on: ubuntu-latest
     env:
-      ISSUE_DATA: ${{ needs.parse_issue.outputs.data }}
+      ORG: ${{ needs.parse_issue.outputs.org }}
+      REPO: ${{ needs.parse_issue.outputs.lesson_repo }}
     steps:
-      - name: Extract JSON fields
-        id: extract
-        run: |
-          echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
-          echo "repo=$(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')" >> $GITHUB_OUTPUT
       - name: Fork lesson repo
-        if: steps.extract.outputs.repo != '*No response*'
+        if: env.REPO != '*No response*'
         run: |
-          gh repo fork ${{ github.repository_owner }}/${{ steps.extract.outputs.repo }} --org ${{ steps.extract.outputs.org }}
+          echo 'gh repo fork ${{ github.repository_owner }}/${{ env.REPO }} --org ${{ env.ORG }}'
+
