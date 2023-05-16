@@ -27,7 +27,7 @@ jobs:
           echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
           echo "repo=$(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')" >> $GITHUB_OUTPUT
           # Using sed to format output as an array
-          echo "assignmens=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed 's/\\r\\n/", "/')" >> $GITHUB_OUTPUT
+          echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed 's/\\r\\n/", "/')" >> $GITHUB_OUTPUT
         env:
           ISSUE_DATA: ${{ steps.parse.outputs.data }}
       - name: Show output
