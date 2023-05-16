@@ -50,7 +50,7 @@ jobs:
       - name: Fork lesson repo
         if: env.REPO != '*No response*'
         run: |
-          echo 'gh repo fork ${{ github.repository_owner }}/${{ env.REPO }} --org ${{ env.ORG }}'
+          gh repo fork ${{ github.repository_owner }}/${{ env.REPO }} --org ${{ env.ORG }}
 
   create_assignment_repos:
     name: Fork assignment repos
@@ -65,4 +65,4 @@ jobs:
       - name: Fork assignment repos
         if: matrix.repos != '*No response*'
         run: |
-          echo 'gh repo fork ${{ github.repository_owner }}/${{ matrix.repos }} --org ${{ env.ORG }}'
+          gh repo fork ${{ github.repository_owner }}/${{ matrix.repos }} --org ${{ env.ORG }}
