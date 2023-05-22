@@ -47,19 +47,19 @@ body:
   id: instructors
   attributes:
     label: List of instructors
-    description: "Provide a list of instructor names and emails so they can be invited to the new organization as admins"
+    description: "Provide a list of instructor emails so they can be invited to the new organization as admins"
     placeholder: |
-      name1, email1
-      name2, email2
+      email1
+      email2
       ...
 - type: textarea
   id: students
   attributes:
     label: List of students
-    description: "Provide a list of student names and emails so they can be invited to the new organization's 'Students team'"
+    description: "Provide a list of student emails so they can be invited to the new organization's 'Students team'"
     placeholder: |
-      name1, email1
-      name2, email2
+      email1
+      email2
       ...
 - type: markdown
   attributes:
