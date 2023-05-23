@@ -81,13 +81,11 @@ jobs:
         if: needs.parse_issue.outputs.instructors != '*No response*'
         run: |
           for instructor in ${{ needs.parse_issue.outputs.instructors }}; do
-            echo $instructor
-            # gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": '$instructor', "role": "admin"}')
+            gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": '$instructor', "role": "admin"}')
           done
       - name: Invite students
         if: needs.parse_issue.outputs.students != '*No response*'
         run: |
           for student in ${{ needs.parse_issue.outputs.students }}; do
-            echo $student
-            # gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": '$student', "role": "direct_member"}')
+            gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": '$student', "role": "direct_member"}')
           done
