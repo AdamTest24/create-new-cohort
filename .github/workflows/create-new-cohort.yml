@@ -17,6 +17,8 @@ jobs:
       org: ${{ steps.extract.outputs.org }}
       lesson_repo: ${{ steps.extract.outputs.repo }}
       assignments: ${{ steps.extract.outputs.assignments }}
+      instructors: ${{ steps.extract.outputs.instructors }}
+      students: ${{ steps.extract.outputs.students }}
     steps:
       - name: Parse issue
         id: parse
@@ -27,7 +29,9 @@ jobs:
           echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
           echo "repo=$(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')" >> $GITHUB_OUTPUT
           # Using sed to format output as an array
-          echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed 's/\\r\\n/", "/')" >> $GITHUB_OUTPUT
+          echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed 's/\\r\\n/", "/g')" >> $GITHUB_OUTPUT
+          echo "instructors=$(echo $ISSUE_DATA | jq -c '."list-of-instructors".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] @.-]//g')" >> $GITHUB_OUTPUT
+          echo "students=$(echo $ISSUE_DATA | jq -c '."list-of-students".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] @.-]//g')" >> $GITHUB_OUTPUT
         env:
           ISSUE_DATA: ${{ steps.parse.outputs.data }}
       - name: Show output
@@ -66,3 +70,24 @@ jobs:
         if: matrix.repos != '*No response*'
         run: |
           gh repo fork ${{ github.repository_owner }}/${{ matrix.repos }} --org ${{ env.ORG }}
+  invite_members:
+    name: Invite students and instructors to org
+    needs: parse_issue
+    runs-on: ubuntu-latest
+    env:
+      ORG: ${{ needs.parse_issue.outputs.org }}
+    steps:
+      - name: Invite instructors
+        if: needs.parse_issue.outputs.instructors != '*No response*'
+        run: |
+          for instructor in ${{ needs.parse_issue.outputs.instructors }}; do
+            echo $instructor
+            # gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": '$instructor', "role": "admin"}')
+          done
+      - name: Invite students
+        if: needs.parse_issue.outputs.students != '*No response*'
+        run: |
+          for student in ${{ needs.parse_issue.outputs.students }}; do
+            echo $student
+            # gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": '$student', "role": "direct_member"}')
+          done
