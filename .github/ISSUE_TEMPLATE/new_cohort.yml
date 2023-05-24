@@ -22,11 +22,11 @@ body:
     required: true
 # TODO: could we convert this to a dropdown menu which lists the available repositories and have a GHA which updates
 #       this list when new repositories are added?
-- type: input
-  id: lesson-repo
+- type: text-area
+  id: lesson-repos
   attributes:
-    label: Lesson repository
-    description: "Name of the repository hosting the sandpaper lesson. Will be cloned to the new organization."
+    label: Lesson repos
+    description: "List of lesson repositories. Will be cloned to the new organization."
     placeholder: lesson-repo
   validations:
    required: false

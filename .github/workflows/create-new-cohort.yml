@@ -27,7 +27,7 @@ jobs:
         id: extract
         run: |
           echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
-          echo "repo=$(echo $ISSUE_DATA | jq -r '."lesson-repository".content|.[]')" >> $GITHUB_OUTPUT
+          echo "repos=$(echo $ISSUE_DATA | jq -r '."lesson-repos".content' sed 's/\\r\\n/", "/g')" >> $GITHUB_OUTPUT
           # Using sed to format output as an array
           echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed 's/\\r\\n/", "/g')" >> $GITHUB_OUTPUT
           echo "instructors=$(echo $ISSUE_DATA | jq -c '."list-of-instructors".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] @.-]//g')" >> $GITHUB_OUTPUT
@@ -45,17 +45,18 @@ jobs:
 
   # TODO: refactor so that all the `create_*_repo` jobs are in a single job
   create_lesson_repo:
-    name: Fork lesson repo
+    name: Fork lesson repos
     needs: parse_issue
     runs-on: ubuntu-latest
     env:
       ORG: ${{ needs.parse_issue.outputs.org }}
-      REPO: ${{ needs.parse_issue.outputs.lesson_repo }}
     steps:
-      - name: Fork lesson repo
-        if: env.REPO != '*No response*'
+      - name: Fork lesson repos
+        if: needs.parse_issue.outputs.lesson_repos != '*No response*'
         run: |
-          gh repo fork ${{ github.repository_owner }}/${{ env.REPO }} --org ${{ env.ORG }}
+          for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
+            gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
+          done
 
   create_assignment_repos:
     name: Fork assignment repos
