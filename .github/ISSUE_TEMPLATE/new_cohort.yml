@@ -22,7 +22,7 @@ body:
     required: true
 # TODO: could we convert this to a dropdown menu which lists the available repositories and have a GHA which updates
 #       this list when new repositories are added?
-- type: text-area
+- type: textarea
   id: lesson-repos
   attributes:
     label: Lesson repos
