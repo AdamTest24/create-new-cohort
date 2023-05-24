@@ -94,5 +94,5 @@ jobs:
       - name: Create Discussions repo
         run: |
           gh api -X POST /orgs/${{ env.ORG }}/repos \
-          --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort", \
+          --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort",
             "private": true, "has_discussions": true, "team_id": "Students"}')
