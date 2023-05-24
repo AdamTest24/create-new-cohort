@@ -43,6 +43,7 @@ jobs:
           name: parse-data
           path: parse_data.json
 
+  # TODO: refactor so that all the `create_*_repo` jobs are in a single job
   create_lesson_repo:
     name: Fork lesson repo
     needs: parse_issue
@@ -70,6 +71,20 @@ jobs:
         if: matrix.repos != '*No response*'
         run: |
           gh repo fork ${{ github.repository_owner }}/${{ matrix.repos }} --org ${{ env.ORG }}
+
+  create_discussions_repo:
+    name: Create Discussions repo
+    needs: parse_issue
+    runs-on: ubuntu-latest
+    env:
+      ORG: ${{ needs.parse_issue.outputs.org }}
+    steps:
+      - name: Create Discussions repo
+        run: |
+          gh api -X POST /orgs/${{ env.ORG }}/repos \
+          --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort", \
+            "private": true, "has_discussions": true, "team_id": "Students"}')
+
   invite_members:
     name: Invite students and instructors to org
     needs: parse_issue
