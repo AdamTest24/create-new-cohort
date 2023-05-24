@@ -27,11 +27,11 @@ jobs:
         id: extract
         run: |
           echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
-          echo "repos=$(echo $ISSUE_DATA | jq -r '."lesson-repos".content' sed 's/\\r\\n/", "/g')" >> $GITHUB_OUTPUT
-          # Using sed to format output as an array
-          echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed 's/\\r\\n/", "/g')" >> $GITHUB_OUTPUT
-          echo "instructors=$(echo $ISSUE_DATA | jq -c '."list-of-instructors".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] @.-]//g')" >> $GITHUB_OUTPUT
-          echo "students=$(echo $ISSUE_DATA | jq -c '."list-of-students".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] @.-]//g')" >> $GITHUB_OUTPUT
+          # Using sed to format output as a list of strings
+          echo "repos=$(echo $ISSUE_DATA | jq -r '."lesson-repos".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g'))" >> $GITHUB_OUTPUT
+          echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g')" >> $GITHUB_OUTPUT
+          echo "instructors=$(echo $ISSUE_DATA | jq -c '."list-of-instructors".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g')" >> $GITHUB_OUTPUT
+          echo "students=$(echo $ISSUE_DATA | jq -c '."list-of-students".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g')" >> $GITHUB_OUTPUT
         env:
           ISSUE_DATA: ${{ steps.parse.outputs.data }}
       - name: Show output
