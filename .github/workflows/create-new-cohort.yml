@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       org: ${{ steps.extract.outputs.org }}
-      lesson_repo: ${{ steps.extract.outputs.repo }}
+      lesson_repos: ${{ steps.extract.outputs.repos }}
       assignments: ${{ steps.extract.outputs.assignments }}
       instructors: ${{ steps.extract.outputs.instructors }}
       students: ${{ steps.extract.outputs.students }}
@@ -43,48 +43,6 @@ jobs:
           name: parse-data
           path: parse_data.json
 
-  # TODO: refactor so that all the `create_*_repo` jobs are in a single job
-  create_lesson_repo:
-    name: Fork lesson repos
-    needs: parse_issue
-    runs-on: ubuntu-latest
-    env:
-      ORG: ${{ needs.parse_issue.outputs.org }}
-    steps:
-      - name: Fork lesson repos
-        if: needs.parse_issue.outputs.lesson_repos != '*No response*'
-        run: |
-          for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
-            gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
-          done
-
-  create_assignment_repos:
-    name: Fork assignment repos
-    needs: parse_issue
-    runs-on: ubuntu-latest
-    env:
-      ORG: ${{ needs.parse_issue.outputs.org }}
-    steps:
-      - name: Fork assignment repos
-        if: needs.parse_issue.outputs.assignments != '*No response*'
-        run: |
-          for assignment in $(echo ${{ needs.parse_issue.outputs.assignments }}); do
-            gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
-          done
-
-  create_discussions_repo:
-    name: Create Discussions repo
-    needs: parse_issue
-    runs-on: ubuntu-latest
-    env:
-      ORG: ${{ needs.parse_issue.outputs.org }}
-    steps:
-      - name: Create Discussions repo
-        run: |
-          gh api -X POST /orgs/${{ env.ORG }}/repos \
-          --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort", \
-            "private": true, "has_discussions": true, "team_id": "Students"}')
-
   invite_members:
     name: Invite students and instructors to org
     needs: parse_issue
@@ -98,14 +56,43 @@ jobs:
           gh api -X POST /orgs/${{ env.ORG }}/teams \
           --input <(echo '{"name": "Students", "description": "Students in this cohort", "privacy": "closed"}')
       - name: Invite instructors to Students team as maintainer # this should also invite them to the org
+        if: ${{ !contains(needs.parse_issue.outputs.instructors, 'No response') }}
         run: |
           for instructor in $(echo ${{ needs.parse_issue.outputs.instructors }}); do
             gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/memberships/${instructor} \
             --input <(echo '{"role": "maintainer"}')
           done
       - name: Invite students to Students team as member # this should also invite them to the org
+        if: ${{ !contains(needs.parse_issue.outputs.students, 'No response') }}
         run: |
           for student in $(echo ${{ needs.parse_issue.outputs.students }}); do
             gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/memberships/${student} \
             --input <(echo '{"role": "member"}')
           done
+
+  create_repos:
+    name: Fork lesson repos
+    needs: [parse_issue, invite_members]
+    runs-on: ubuntu-latest
+    env:
+      ORG: ${{ needs.parse_issue.outputs.org }}
+    steps:
+      - name: Fork lesson repos
+        if: needs.parse_issue.outputs.lesson_repos != '*No response*'
+        run: |
+          for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
+            gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
+          done
+
+      - name: Fork assignment repos
+        if: needs.parse_issue.outputs.assignments != '*No response*'
+        run: |
+          for assignment in $(echo ${{ needs.parse_issue.outputs.assignments }}); do
+            gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
+          done
+
+      - name: Create Discussions repo
+        run: |
+          gh api -X POST /orgs/${{ env.ORG }}/repos \
+          --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort", \
+            "private": true, "has_discussions": true, "team_id": "Students"}')
