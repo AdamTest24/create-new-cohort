@@ -89,3 +89,6 @@ jobs:
           for student in $(echo ${{ needs.parse_issue.outputs.students }}); do
             gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": "'${student}'", "role": "direct_member"}')
           done
+      - name: Create Students team
+        run: |
+          gh api -X POST /orgs/${{ env.ORG }}/teams --input <(echo '{"name": "Students", "description": "Students in this cohort", "privacy": "closed"}')
