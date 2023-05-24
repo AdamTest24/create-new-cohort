@@ -64,14 +64,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ORG: ${{ needs.parse_issue.outputs.org }}
-    strategy:
-      matrix:
-        repos: ${{ fromJson(needs.parse_issue.outputs.assignments) }}
     steps:
       - name: Fork assignment repos
-        if: matrix.repos != '*No response*'
+        if: needs.parse_issue.outputs.assignments != '*No response*'
         run: |
-          gh repo fork ${{ github.repository_owner }}/${{ matrix.repos }} --org ${{ env.ORG }}
+          for assignment in $(echo ${{ needs.parse_issue.outputs.assignments }}); do
+            gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
+          done
 
   create_discussions_repo:
     name: Create Discussions repo
