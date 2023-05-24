@@ -77,26 +77,19 @@ jobs:
     env:
       ORG: ${{ needs.parse_issue.outputs.org }}
     steps:
-      - name: Invite instructors
-        if: ${{ !contains(needs.parse_issue.outputs.instructors, 'No response') }}
-        run: |
-          for instructor in $(echo ${{ needs.parse_issue.outputs.instructors }}); do
-            gh api -X POST /orgs/${{ env.ORG }}/invitations \
-            --input <(echo '{"email": "'${instructor}'", "role": "admin"}')
-          done
-      - name: Invite students
-        if: ${{ !contains(needs.parse_issue.outputs.students, 'No response') }}
-        run: |
-          for student in $(echo ${{ needs.parse_issue.outputs.students }}); do
-            gh api -X POST /orgs/${{ env.ORG }}/invitations --input <(echo '{"email": "'${student}'", "role": "direct_member"}')
-          done
       - name: Create Students team
         run: |
           gh api -X POST /orgs/${{ env.ORG }}/teams \
           --input <(echo '{"name": "Students", "description": "Students in this cohort", "privacy": "closed"}')
-      # FIXME: requires GitHub usernames!
-      # - name: Add students to Students team
-      #   run: |
-      #     for student in $(echo ${{ needs.parse_issue.outputs.students }}); do
-      #       gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/memberships/${student}
-      #     done
+      - name: Invite instructors to Students team as maintainer # this should also invite them to the org
+        run: |
+          for instructor in $(echo ${{ needs.parse_issue.outputs.instructors }}); do
+            gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/memberships/${instructor} \
+            --input <(echo '{"role": "maintainer"}')
+          done
+      - name: Invite students to Students team as member # this should also invite them to the org
+        run: |
+          for student in $(echo ${{ needs.parse_issue.outputs.students }}); do
+            gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/memberships/${student} \
+            --input <(echo '{"role": "member"}')
+          done
