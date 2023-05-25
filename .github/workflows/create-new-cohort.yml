@@ -28,10 +28,10 @@ jobs:
         run: |
           echo "org=$(echo $ISSUE_DATA | jq -r '."organization-name".content|.[]')" >> $GITHUB_OUTPUT
           # Using sed to format output as a list of strings
-          echo "repos=$(echo $ISSUE_DATA | jq -c '."lesson-repos".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g')" >> $GITHUB_OUTPUT
-          echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g')" >> $GITHUB_OUTPUT
-          echo "instructors=$(echo $ISSUE_DATA | jq -c '."list-of-instructors".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g')" >> $GITHUB_OUTPUT
-          echo "students=$(echo $ISSUE_DATA | jq -c '."list-of-students".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] .-]//g')" >> $GITHUB_OUTPUT
+          echo "repos=$(echo $ISSUE_DATA | jq -c '."lesson-repos".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] _.-]//g')" >> $GITHUB_OUTPUT
+          echo "assignments=$(echo $ISSUE_DATA | jq -c '."list-of-assignments".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] _.-]//g')" >> $GITHUB_OUTPUT
+          echo "instructors=$(echo $ISSUE_DATA | jq -c '."list-of-instructors".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] _.-]//g')" >> $GITHUB_OUTPUT
+          echo "students=$(echo $ISSUE_DATA | jq -c '."list-of-students".content' | sed -e 's/\\r\\n/ /g' -e 's/[^[:alnum:] _.-]//g')" >> $GITHUB_OUTPUT
         env:
           ISSUE_DATA: ${{ steps.parse.outputs.data }}
       - name: Show output
@@ -82,6 +82,14 @@ jobs:
         run: |
           for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
             gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
+          done
+
+      - name: Enable all GitHub Actions for lesson repos
+        if: needs.parse_issue.outputs.lesson_repos != '*No response*'
+        run: |
+          for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
+            gh api -X PUT /repos/${{ env.ORG }}/${repo}/actions/permissions \
+            --input <(echo '{"enabled": true}')
           done
 
       - name: Fork assignment repos
