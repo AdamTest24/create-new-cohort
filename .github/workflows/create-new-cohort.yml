@@ -47,11 +47,11 @@ jobs:
     name: Invite students and instructors to org
     needs: parse_issue
     runs-on: ubuntu-latest
+    continue-on-error: true # allow workflow to continue even if (some) invitations fail
     env:
       ORG: ${{ needs.parse_issue.outputs.org }}
     steps:
       - name: Create Students team
-        continue-on-error: true # if the team already exists, this will fail
         run: |
           gh api -X POST /orgs/${{ env.ORG }}/teams \
           --input <(echo '{"name": "Students", "description": "Students in this cohort", "privacy": "closed"}')
@@ -72,7 +72,7 @@ jobs:
 
   create_repos:
     name: Fork lesson repos
-    needs: [parse_issue, invite_members]
+    needs: [parse_issue]
     runs-on: ubuntu-latest
     env:
       ORG: ${{ needs.parse_issue.outputs.org }}
