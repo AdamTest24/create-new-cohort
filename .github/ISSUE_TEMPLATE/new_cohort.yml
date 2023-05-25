@@ -63,5 +63,9 @@ body:
       ...
 - type: markdown
   attributes:
-    # TODO: document next steps
-    value: "Thanks for completing the form! The next steps are..."
+    value: |
+      ## Next steps
+      Note that some steps still remain that have to be done manually:
+      1. [Enable organization-level Discussions](https://docs.github.com/en/organizations/managing-organization-settings/enabling-or-disabling-github-discussions-for-an-organization) for the new cohort organization and choose the **Discussions** repo to host these
+      2. Go to the forked lesson (sandpaper) repositories, and, so that the lessons are deployed automatically: go to the `Actions` tab of the repository and click on the green button (see image below) 
+      3. Set up the [GitHub Classroom](https://classroom.github.com/classrooms/new) using the organization you created in **step 2**
