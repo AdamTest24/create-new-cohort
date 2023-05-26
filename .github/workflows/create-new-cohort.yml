@@ -80,14 +80,14 @@ jobs:
       ORG: ${{ needs.parse_issue.outputs.org }}
     steps:
       - name: Fork lesson repos
-        if: needs.parse_issue.outputs.lesson_repos != '*No response*'
+        if: ${{ !contains(needs.parse_issue.outputs.lesson_repos, 'No response') }}
         run: |
           for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
             gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
           done
 
       - name: Enable all GitHub Actions for lesson repos
-        if: needs.parse_issue.outputs.lesson_repos != '*No response*'
+        if: ${{ !contains(needs.parse_issue.outputs.lesson_repos, 'No response') }}
         run: |
           for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
             gh api -X PUT /repos/${{ env.ORG }}/${repo}/actions/permissions \
@@ -95,7 +95,7 @@ jobs:
           done
 
       - name: Fork assignment repos
-        if: needs.parse_issue.outputs.assignments != '*No response*'
+        if: ${{ !contains(needs.parse_issue.outputs.assignments, 'No response') }}
         run: |
           for assignment in $(echo ${{ needs.parse_issue.outputs.assignments }}); do
             gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
