@@ -83,7 +83,13 @@ jobs:
         if: ${{ !contains(needs.parse_issue.outputs.lesson_repos, 'No response') }}
         run: |
           for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
-            gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
+            # Check if the repository exists
+            gh repo view "${{ env.ORG }}/${repo}" >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
+              echo "${repo} repo already exists"
+            else
+              gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
+            fi
           done
 
       - name: Enable all GitHub Actions for lesson repos
@@ -98,11 +104,23 @@ jobs:
         if: ${{ !contains(needs.parse_issue.outputs.assignments, 'No response') }}
         run: |
           for assignment in $(echo ${{ needs.parse_issue.outputs.assignments }}); do
-            gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
+            # Check if the repository exists
+            gh repo view "${{ env.ORG }}/${{ needs.parse_issue.outputs.assignments }}" >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
+              echo "${{ needs.parse_issue.outputs.assignments }} repo already exists"
+            else
+              gh repo fork ${{ github.repository_owner }}/${{ needs.parse_issue.outputs.assignments }} --org ${{ env.ORG }}
+            fi
           done
 
       - name: Create Discussions repo
         run: |
-          gh api -X POST /orgs/${{ env.ORG }}/repos \
-          --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort",
-            "private": true, "has_discussions": true}')
+          # Check if the repository exists
+          gh repo view "${{ env.ORG }}/Discussions" >/dev/null 2>&1
+          if [ $? -eq 0 ]; then
+            echo "Discussions repo already exists"
+          else
+            gh api -X POST /orgs/${{ env.ORG }}/repos \
+            --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort",
+              "private": true, "has_discussions": true}')
+          fi
