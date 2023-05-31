@@ -130,7 +130,8 @@ jobs:
             gh api -X POST /orgs/${{ env.ORG }}/repos \
             --input <(echo '{"name": "Discussions", "description": "Discussion forum for this cohort",
               "private": true, "has_discussions": true}')
-            ## Give Students team read access to repo
-            gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/repos/${{ env.ORG }}/Discussions \
-            --input <(echo '{"permission": "pull"}')
           fi
+      - name: Give Students team read access to repo
+        run: |
+          gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/repos/${{ env.ORG }}/Discussions \
+              --input <(echo '{"permission": "pull"}')
