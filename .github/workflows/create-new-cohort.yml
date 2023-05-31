@@ -63,6 +63,13 @@ jobs:
             gh api -X PUT /orgs/${{ env.ORG }}/teams/Students/memberships/${instructor} \
             --input <(echo '{"role": "maintainer"}')
           done
+      - name: Make instructors admin owners of org
+        if: ${{ !contains(needs.parse_issue.outputs.instructors, 'No response') }}
+        run: |
+          for instructor in $(echo ${{ needs.parse_issue.outputs.instructors }}); do
+            gh api -X PUT /orgs/${{ env.ORG }}/memberships/${instructor} \
+            --input <(echo '{"role": "admin"}')
+          done
       - name: Invite students to Students team as member # this should also invite them to the org
         if: ${{ !contains(needs.parse_issue.outputs.students, 'No response') }}
         continue-on-error: true # continue even if some invitiations fail
