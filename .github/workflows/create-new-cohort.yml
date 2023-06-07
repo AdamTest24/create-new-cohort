@@ -91,9 +91,8 @@ jobs:
         run: |
           for repo in $(echo ${{ needs.parse_issue.outputs.lesson_repos }}); do
             # Check if the repository exists
-            set -o pipefail
-            REPO_EXISTS=$(gh repo view "${{ env.ORG }}/${repo}" >/dev/null 2>&1 || echo $?)
-            if [ $REPO_EXISTS -eq 0 ]; then
+            gh repo view "${{ env.ORG }}/${repo}" >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
               echo "${repo} repo already exists"
             else
               gh repo fork ${{ github.repository_owner }}/${repo} --org ${{ env.ORG }}
@@ -113,21 +112,19 @@ jobs:
         run: |
           for assignment in $(echo ${{ needs.parse_issue.outputs.assignments }}); do
             # Check if the repository exists
-            set -o pipefail
-            REPO_EXISTS=$(gh repo view "${{ env.ORG }}/${assignment}" >/dev/null 2>&1 || echo $?)
-            if [ $REPO_EXISTS -eq 0 ]; then
-              echo "${assignment} repo already exists"
+            gh repo view "${{ env.ORG }}/${{ needs.parse_issue.outputs.assignments }}" >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
+              echo "${{ needs.parse_issue.outputs.assignments }} repo already exists"
             else
-              gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
+              gh repo fork ${{ github.repository_owner }}/${{ needs.parse_issue.outputs.assignments }} --org ${{ env.ORG }}
             fi
           done
 
       - name: Create Discussions repo
         run: |
           # Check if the repository exists
-          set -o pipefail
-          REPO_EXISTS=$(gh repo view "${{ env.ORG }}/Discussions" >/dev/null 2>&1 || echo $?)
-          if [ $REPO_EXISTS -eq 0 ]; then
+          gh repo view "${{ env.ORG }}/Discussions" >/dev/null 2>&1
+          if [ $? -eq 0 ]; then
             echo "Discussions repo already exists"
           else
             gh api -X POST /orgs/${{ env.ORG }}/repos \
