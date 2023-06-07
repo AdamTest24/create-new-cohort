@@ -83,6 +83,7 @@ jobs:
     name: Fork lesson repos
     needs: [parse_issue]
     runs-on: ubuntu-latest
+    continue-on-error: true
     env:
       ORG: ${{ needs.parse_issue.outputs.org }}
     steps:
