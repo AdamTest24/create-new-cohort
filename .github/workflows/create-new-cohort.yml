@@ -115,11 +115,11 @@ jobs:
           set +e
           for assignment in $(echo ${{ needs.parse_issue.outputs.assignments }}); do
             # Check if the repository exists
-            gh repo view "${{ env.ORG }}/${{ needs.parse_issue.outputs.assignments }}" >/dev/null 2>&1
+            gh repo view "${{ env.ORG }}/${assignment}" >/dev/null 2>&1
             if [ $? -eq 0 ]; then
-              echo "${{ needs.parse_issue.outputs.assignments }} repo already exists"
+              echo "${aggignment} repo already exists"
             else
-              gh repo fork ${{ github.repository_owner }}/${{ needs.parse_issue.outputs.assignments }} --org ${{ env.ORG }}
+              gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
             fi
           done
 
