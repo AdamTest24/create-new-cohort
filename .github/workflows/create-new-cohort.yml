@@ -117,7 +117,7 @@ jobs:
             # Check if the repository exists
             gh repo view "${{ env.ORG }}/${assignment}" >/dev/null 2>&1
             if [ $? -eq 0 ]; then
-              echo "${aggignment} repo already exists"
+              echo "${assignment} repo already exists"
             else
               gh repo fork ${{ github.repository_owner }}/${assignment} --org ${{ env.ORG }}
             fi
