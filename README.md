@@ -1,6 +1,6 @@
 # Creating a new cohort
 
-This repository hosts the [Issue Form](https://github.com/LearnToDiscover/create-new-cohort/issues/new/choose) and associated [GitHub Actions workflow](https://github.com/LearnToDiscover/create-new-cohort/blob/main/.github/workflows/create-new-cohort.yml) to automate as many of the steps as possible when creating a new cohort.
+This repository hosts the [Issue Form](https://github.com/LearnToDiscover/create-new-cohort/issues/new/choose) and associated [GitHub Actions workflow](.github/workflows/) to automate as many of the steps as possible when creating a new cohort.
 
 ## Steps
 
